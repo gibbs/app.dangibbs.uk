@@ -9,8 +9,17 @@ on:
       - 'master'
 
 jobs:
-  unit:
+  feature:
     runs-on: ubuntu-20.04
+    services:
+      webhooks:
+        image: gibbs/app.dangibbs.uk-webhooks:latest
+        env:
+          WEBHOOK_TOKEN: MY_SECRET_TOKEN
+        ports:
+          - 9100:9000
+        options: >-
+          -template -verbose -hooks=/etc/webhook/hooks.yaml -hotreload
     steps:
       - uses: actions/checkout@v2
       - uses: addnab/docker-run-action@v3
