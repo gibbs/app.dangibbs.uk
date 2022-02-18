@@ -18,5 +18,8 @@ Route::get('/', function () {
     return redirect()->away('https://dangibbs.uk/', 301);
 });
 
-// Activity Feed
-Route::get('/data/activity-feed.json', Controllers\Data\ActivityFeed::class);
+// Activity feed
+Route::get('data/activity-feed.json', Controllers\Data\ActivityFeed::class);
+
+// UUID webhook test
+Route::post('/tool/uuidgen.json', Controllers\Tool\Uuid::class);

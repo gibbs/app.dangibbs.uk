@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Data;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
 class ActivityFeed extends Controller
 {
-    public function __invoke()
+    /**
+     * Return the activity feed.
+     */
+    public function __invoke(): \Illuminate\Http\JsonResponse
     {
         // Get the cached GitHub response
         $item = Cache::get('github_activity_feed');
