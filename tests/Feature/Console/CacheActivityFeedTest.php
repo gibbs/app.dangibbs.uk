@@ -3,9 +3,6 @@
 namespace Tests\Feature\Console;
 
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;
 

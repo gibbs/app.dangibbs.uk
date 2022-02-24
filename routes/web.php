@@ -14,12 +14,17 @@ use App\Http\Controllers;
 |
 */
 
-Route::get('/', function () {
+Route::get('/', function() {
     return redirect()->away('https://dangibbs.uk/', 301);
 });
 
-// Activity feed
-Route::get('data/activity-feed.json', Controllers\Data\ActivityFeed::class);
+// Data
+Route::prefix('data')->group(function() {
+    Route::get('/activity-feed.json', Controllers\Data\ActivityFeed::class);
+});
 
-// UUID webhook test
-Route::post('/tool/uuidgen.json', Controllers\Tool\Uuid::class);
+// Tools
+Route::prefix('tool')->group(function() {
+    Route::post('/uuidgen', Controllers\Tool\Uuid::class);
+    Route::post('/mkpasswd', Controllers\Tool\Mkpasswd::class);
+});

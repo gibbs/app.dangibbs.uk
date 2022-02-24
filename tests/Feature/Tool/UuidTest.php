@@ -1,15 +1,14 @@
 <?php
+
 namespace Tests\Feature\Tool;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class UuidTest extends TestCase
 {
     public function test_returns_json(): void
     {
-        $response = $this->post('/tool/uuidgen.json', [
+        $response = $this->post('/tool/uuidgen', [
             'random' => true,
         ]);
 
@@ -24,7 +23,7 @@ class UuidTest extends TestCase
 
     public function test_valid_parameters_succeed(): void
     {
-        $response = $this->withHeaders(['accept' => 'application/json'])->post('/tool/uuidgen.json', [
+        $response = $this->withHeaders(['accept' => 'application/json'])->post('/tool/uuidgen', [
             'random' => true,
             'time'   => true,
             'bumf'   => '123',
@@ -41,7 +40,7 @@ class UuidTest extends TestCase
 
     public function test_invalid_parameters_fail(): void
     {
-        $response = $this->withHeaders(['accept' => 'application/json'])->post('/tool/uuidgen.json', [
+        $response = $this->withHeaders(['accept' => 'application/json'])->post('/tool/uuidgen', [
             'random' => 'abc',
             'time'   => 'false',
         ]);
@@ -49,7 +48,7 @@ class UuidTest extends TestCase
         // Assertions
         $response->assertStatus(422);
         $response->assertJson([
-            'message' => 'The random field must be true or false. (and 1 more error)'
+            'message' => 'The random field must be true or false. (and 1 more error)',
         ]);
         $response->assertHeader('content-type', 'application/json');
     }

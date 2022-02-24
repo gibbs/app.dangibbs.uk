@@ -2,8 +2,6 @@
 
 namespace Tests\Feature\Data;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;
 
