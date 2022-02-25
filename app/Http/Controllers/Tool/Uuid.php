@@ -10,14 +10,14 @@ use Illuminate\Http\JsonResponse;
 class Uuid extends Controller
 {
     /**
-     * Return a UUID generated from a webhook.
+     * Return a UUID generated from a service URL
      */
     public function __invoke(UuidRequest $request): JsonResponse
     {
-        // Create the webhook request url
-        $request_url = sprintf('%s/tools/uuidgen', env('WEBHOOK_URL'));
+        // Create the request url
+        $request_url = sprintf('%s/tools/uuidgen', config('app.webhook_url'));
 
-        // Webhook response
+        // Service response
         $response = Http::withHeaders(['content-type' => 'application/json'])
             ->post($request_url, [
                 'random' => (bool) $request->get('random'),
