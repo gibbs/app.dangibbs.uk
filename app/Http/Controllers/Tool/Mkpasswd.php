@@ -10,14 +10,14 @@ use Illuminate\Http\JsonResponse;
 class Mkpasswd extends Controller
 {
     /**
-     * Return an encrypted password returned via a webhook
+     * Return an encrypted password returned via a service URL
      */
     public function __invoke(MkpasswdRequest $request): JsonResponse
     {
-        // Create the webhook request url
-        $request_url = sprintf('%s/tools/mkpasswd', env('WEBHOOK_URL'));
+        // Create the request url
+        $request_url = sprintf('%s/tools/mkpasswd', config('app.webhook_url'));
 
-        // Webhook response
+        // Service response
         $response = Http::withHeaders(['content-type' => 'application/json'])
             ->post($request_url, [
                 'input'  => (string) $request->get('input'),
