@@ -12,16 +12,16 @@ class ActivityFeed extends Controller
      */
     public function __invoke(): \Illuminate\Http\JsonResponse
     {
-        // Get the cached GitHub response
-        $item = Cache::get('github_activity_feed');
+        // Get the cached activity feed
+        $activity = Cache::get('github_activity_feed');
 
-        if (empty($item) || $item === null) {
-            return response()->json([
-                'success' => false,
-                'error' => 'Failed to retrieve data.',
-            ]);
-        }
+        // Get the cached insights feed
+        $insights  = Cache::get('github_insights_languages');
 
-        return response()->json($item);
+        // Return available data
+        return response()->json([
+            'activity' => $activity,
+            'insights' => $insights,
+        ]);
     }
 }
