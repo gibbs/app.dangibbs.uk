@@ -15,7 +15,11 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        // GitHub activity feed (commits)
         $schedule->command('cache:activityfeed')->hourly();
+
+        // GitHub insights (languages)
+        $schedule->command('cache:insights')->weekly();
     }
 
     /**

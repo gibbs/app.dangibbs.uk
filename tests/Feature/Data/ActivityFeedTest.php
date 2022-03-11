@@ -14,6 +14,11 @@ class ActivityFeedTest extends TestCase
             ->with('github_activity_feed')
             ->andReturn(['incomplete_results' => false]);
 
+        Cache::shouldReceive('get')
+            ->once()
+            ->with('github_insights_languages')
+            ->andReturn(['incomplete_results' => false]);
+
         $response = $this->get('/data/activity-feed.json');
         $response->assertStatus(200);
         $response->assertHeader('content-type', 'application/json');
@@ -26,10 +31,16 @@ class ActivityFeedTest extends TestCase
             ->with('github_activity_feed')
             ->andReturn(null);
 
+        Cache::shouldReceive('get')
+            ->once()
+            ->with('github_insights_languages')
+            ->andReturn(null);
+
         $response = $this->get('/data/activity-feed.json');
         $response->assertStatus(200);
         $response->assertJSON([
-            'success' => false,
+            'activity' => null,
+            'insights' => null,
         ]);
     }
 }
