@@ -19,7 +19,11 @@ jobs:
       - uses: addnab/docker-run-action@v3
         with:
           image: genv/php-cli:8.1
-          options: -v ${{ github.workspace }}:/data/
+          options: >-
+            -v ${{ github.workspace }}:/data/
+            -e API_GITHUB_USERNAME=${{ secrets.API_GITHUB_USERNAME }}
+            -e API_GITHUB_ACCESS_TOKEN=${{ secrets.API_GITHUB_ACCESS_TOKEN }}
           run: |
             /usr/local/bin/composer install
+            cp phpunit.dist.xml phpunit.xml
             /data/vendor/bin/phpunit /data/tests/
