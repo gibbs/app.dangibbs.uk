@@ -54,9 +54,33 @@ class CacheActivityFeed extends Command
             ->throw()
             ->json();
 
-        // Cache the response
-        if (isset($response['items'])) {
-            Cache::forever('github_activity_feed', $response);
+        $items = [];
+
+        foreach($response['items'] as $item) {
+            $items[] = [
+                'author' => [
+                    'avatar_url' => $item['author']['avatar_url'],
+                    'login'      => $item['author']['login'],
+                ],
+                'commit' => [
+                    'author'  => [
+                        'date' => $item['commit']['author']['date'],
+                    ],
+                    'message' => $item['commit']['message'],
+                    'url'     => $item['commit']['url'],
+                ],
+                'repository' => [
+                    'name'     => $item['repository']['name'],
+                    'html_url' => $item['repository']['html_url'],
+                ],
+                'html_url' => $item['html_url'],
+                'sha' => $item['sha'],
+            ];
+        }
+
+        // Cache the data
+        if (isset($items)) {
+            Cache::forever('github_activity_feed', ['items' => $items]);
         }
 
         return 0;
