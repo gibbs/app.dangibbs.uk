@@ -55,7 +55,7 @@ class CacheInsights extends Command
                 ->json();
 
             // Cache response
-            Cache::put($repositories_key, $repositories, now()->addDays(1));
+            Cache::forever($repositories_key, $repositories);
         }
 
         $language_data = [];
@@ -76,7 +76,7 @@ class CacheInsights extends Command
                     ->throw()
                     ->json();
 
-                Cache::put($language_key, $languages, now()->addDays(7));
+                Cache::forever($language_key, $languages);
             }
 
             // Create the language data
@@ -102,10 +102,10 @@ class CacheInsights extends Command
         });
 
         // Cache general data
-        Cache::put('github_insights_languages', [
+        Cache::forever('github_insights_languages', [
             'usage'     => $language_data,
             'languages' => array_keys($language_data),
-        ], now()->addDays(1));
+        ]);
 
         return 0;
     }
