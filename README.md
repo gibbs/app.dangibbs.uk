@@ -21,25 +21,26 @@ sail up -d
 ## Test
 
 ```bash
+# Test suite
 sail artisan test
+
+# Individual test
+sail artisan test --filter MkpasswdTest
 ```
 
-## Image
+## Build
+
+### Build Container
 
 ```bash
-export DOCKER_BUILD_NAME="gibbs/app.dangibbs.uk"
-export DOCKER_BUILD_TAG="0.5"
-```
-
-### Build
-
-```bash
+source .env
 docker build --no-cache -t ${DOCKER_BUILD_NAME}:${DOCKER_BUILD_TAG} -t ${DOCKER_BUILD_NAME}:latest .
 ```
 
-### Run
+### Run Container
 
 ```bash
+source .env
 docker run -it ${DOCKER_BUILD_NAME}:${DOCKER_BUILD_TAG}
 ```
 

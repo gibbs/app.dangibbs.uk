@@ -25,6 +25,7 @@ Route::prefix('data')->group(function() {
 
 // Tools
 Route::prefix('tool')->group(function() {
+    Route::post('/dig', Controllers\Tool\Dig::class);
     Route::post('/uuidgen', Controllers\Tool\Uuid::class);
     Route::post('/mkpasswd', Controllers\Tool\Mkpasswd::class);
     Route::post('/pwgen', Controllers\Tool\Pwgen::class);
