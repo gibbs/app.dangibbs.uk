@@ -36,10 +36,11 @@ class Dig extends Controller
             ->throw()
             ->json();
 
-        // Overwrite response output
-        $response['output'] = $this->parseResponseJson($response);
-
-        return response()->json($response);
+        return response()->json([
+            'output'  => $this->parseResponseJson($response),
+            'command' => sprintf('dig %s', $response['command']),
+            'success' => $response['success'],
+        ]);
     }
 
     /**
