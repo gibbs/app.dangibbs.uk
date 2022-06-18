@@ -43,20 +43,17 @@ class CacheInsights extends Command
         $repositories_key = 'github_repositories';
 
         // Get repositories data
-        if (!$repositories = Cache::get($repositories_key)) {
-            $repositories = Http::withHeaders(['content-type' => 'application/json'])
-                ->withBasicAuth(config('api.github_username'), config('api.github_access_token'))
-                ->get(sprintf('%s/users/gibbs/repos', $url), [
-                    'order'    => 'desc',
-                    'page'     => 1,
-                    'per_page' => 100,
-                ])
-                ->throw()
-                ->json();
+        $repositories = Http::withBasicAuth(config('api.github_username'), config('api.github_access_token'))
+            ->get(sprintf('%s/users/gibbs/repos', $url), [
+                'order'    => 'desc',
+                'page'     => 1,
+                'per_page' => 100,
+            ])
+            ->throw()
+            ->json();
 
-            // Cache response
-            Cache::forever($repositories_key, $repositories);
-        }
+        // Cache response
+        Cache::forever($repositories_key, $repositories);
 
         $language_data = [];
 
@@ -68,16 +65,14 @@ class CacheInsights extends Command
 
             $language_key = sprintf('github_repository_languages_%s', $repository['full_name']);
 
-            // Get language data from cache
-            if (!$languages = Cache::get($language_key)) {
-                $languages = Http::withHeaders(['content-type' => 'application/json'])
-                    ->withBasicAuth(config('api.github_username'), config('api.github_access_token'))
-                    ->get(sprintf('%s/repos/%s/languages', $url, $repository['full_name']))
-                    ->throw()
-                    ->json();
+            // Get language data
+            $languages = Http::withHeaders(['content-type' => 'application/json'])
+                ->withBasicAuth(config('api.github_username'), config('api.github_access_token'))
+                ->get(sprintf('%s/repos/%s/languages', $url, $repository['full_name']))
+                ->throw()
+                ->json();
 
-                Cache::forever($language_key, $languages);
-            }
+            Cache::forever($language_key, $languages);
 
             // Create the language data
             foreach($languages as $language => $bytes) {
