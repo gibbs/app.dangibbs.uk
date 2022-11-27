@@ -1,12 +1,12 @@
 <?php
 
-namespace Tests\Feature\Console;
+namespace Tests\Feature\Console\Cache;
 
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;
 
-class CacheInsightsTest extends TestCase
+class InsightsTest extends TestCase
 {
     use DatabaseMigrations;
 

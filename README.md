@@ -16,6 +16,9 @@ composer install
 
 # Run container via sail
 sail up -d
+
+# Create database
+sail artisan migrate
 ```
 
 ## Test

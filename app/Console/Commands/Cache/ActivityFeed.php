@@ -1,56 +1,41 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\Cache;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\{
+    Cache,
+    Http
+};
 
-class CacheActivityFeed extends Command
+class ActivityFeed extends Command
 {
+    public const CACHE_KEY = 'github_activity_feed';
+
     /**
-     * The name and signature of the console command.
-     *
      * @var string
      */
     protected $signature = 'cache:activityfeed';
 
     /**
-     * The console command description.
-     *
      * @var string
      */
     protected $description = 'Caches activity feed API requests to GitHub';
 
     /**
-     * Create a new command instance.
-     *
-     * @return void
+     * @inheritDoc
      */
-    public function __construct()
+    public function handle(): int
     {
-        parent::__construct();
-    }
-
-    /**
-     * Execute the console command.
-     *
-     * @return int
-     */
-    public function handle()
-    {
-        $url = 'https://api.github.com/search/commits?';
-        $url_parameters = [
-            'q'        => 'author:gibbs is:public',
-            'sort'     => 'author-date',
-            'order'    => 'desc',
-            'page'     => 1,
-            'per_page' => 10,
-        ];
-
         // GitHub API response
         $response = Http::withHeaders(['content-type' => 'application/json'])
-            ->get($url, $url_parameters)
+            ->get('https://api.github.com/search/commits?', [
+                'q'        => 'author:gibbs is:public',
+                'sort'     => 'author-date',
+                'order'    => 'desc',
+                'page'     => 1,
+                'per_page' => 10,
+            ])
             ->throw()
             ->json();
 
@@ -80,7 +65,7 @@ class CacheActivityFeed extends Command
 
         // Cache the data
         if (isset($items)) {
-            Cache::forever('github_activity_feed', ['items' => $items]);
+            Cache::forever(self::CACHE_KEY, ['items' => $items]);
         }
 
         return 0;

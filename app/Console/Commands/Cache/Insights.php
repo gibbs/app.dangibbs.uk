@@ -1,50 +1,35 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\Cache;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\{
+    Cache,
+    Http
+};
 
-class CacheInsights extends Command
+class Insights extends Command
 {
+    public const CACHE_KEY = 'github_repositories';
+
     /**
-     * The name and signature of the console command.
-     *
      * @var string
      */
     protected $signature = 'cache:insights';
 
     /**
-     * The console command description.
-     *
      * @var string
      */
     protected $description = 'Caches insights data from API requests to GitHub';
 
     /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-    /**
-     * Execute the console command.
+     * @inheritDoc
      */
     public function handle(): int
     {
-        $url = 'https://api.github.com';
-
-        // Repositories cache key
-        $repositories_key = 'github_repositories';
-
         // Get repositories data
         $repositories = Http::withBasicAuth(config('api.github_username'), config('api.github_access_token'))
-            ->get(sprintf('%s/users/gibbs/repos', $url), [
+            ->get('https://api.github.com/users/gibbs/repos', [
                 'order'    => 'desc',
                 'page'     => 1,
                 'per_page' => 100,
@@ -53,11 +38,10 @@ class CacheInsights extends Command
             ->json();
 
         // Cache response
-        Cache::forever($repositories_key, $repositories);
+        Cache::forever(self::CACHE_KEY, $repositories);
 
         $language_data = [];
 
-        // Iterate repository data
         foreach($repositories as $repository) {
             if ($repository['fork']) {
                 continue;
@@ -68,7 +52,7 @@ class CacheInsights extends Command
             // Get language data
             $languages = Http::withHeaders(['content-type' => 'application/json'])
                 ->withBasicAuth(config('api.github_username'), config('api.github_access_token'))
-                ->get(sprintf('%s/repos/%s/languages', $url, $repository['full_name']))
+                ->get(sprintf('https://api.github.com/repos/%s/languages', $repository['full_name']))
                 ->throw()
                 ->json();
 
