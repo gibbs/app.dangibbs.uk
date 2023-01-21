@@ -21,6 +21,7 @@ Route::get('/', function() {
 // Data
 Route::prefix('data')->group(function() {
     Route::get('/activity-feed.json', Controllers\Data\ActivityFeed::class);
+    Route::get('/eol/linux.json', Controllers\Data\EOL\Linux::class);
 });
 
 // Tools

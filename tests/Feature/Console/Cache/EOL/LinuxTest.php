@@ -1,12 +1,12 @@
 <?php
 
-namespace Tests\Feature\Console\Cache;
+namespace Tests\Feature\Console\Cache\EOL;
 
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;
 
-class ActivityFeedTest extends TestCase
+class LinuxTest extends TestCase
 {
     use DatabaseMigrations;
 
@@ -14,19 +14,18 @@ class ActivityFeedTest extends TestCase
 
     public function setUp(): void
     {
-        $this->key = \App\Console\Commands\Cache\ActivityFeed::CACHE_KEY;
+        $this->key = \App\Console\Commands\Cache\EOL\Linux::CACHE_KEY;
         parent::setUp();
     }
 
     public function test_command_runs_and_caches_result(): void
     {
-        $this->artisan('cache:activityfeed')->assertExitCode(0);
+        $this->artisan('cache:eol-linux')->assertExitCode(0);
 
         // Cache entry created
         $this->assertTrue(Cache::has($this->key));
 
         // Items in cache
-        $item = Cache::get($this->key);
-        $this->assertNotEmpty($item['items']);
+        $this->assertNotEmpty(Cache::get($this->key));
     }
 }

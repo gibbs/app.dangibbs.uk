@@ -11,12 +11,12 @@ class ActivityFeedTest extends TestCase
     {
         Cache::shouldReceive('get')
             ->once()
-            ->with('github_activity_feed')
+            ->with(\App\Console\Commands\Cache\ActivityFeed::CACHE_KEY)
             ->andReturn(['incomplete_results' => false]);
 
         Cache::shouldReceive('get')
             ->once()
-            ->with('github_insights_languages')
+            ->with(\App\Console\Commands\Cache\Insights::CACHE_KEY)
             ->andReturn(['incomplete_results' => false]);
 
         $response = $this->get('/data/activity-feed.json');
@@ -28,12 +28,12 @@ class ActivityFeedTest extends TestCase
     {
         Cache::shouldReceive('get')
             ->once()
-            ->with('github_activity_feed')
+            ->with(\App\Console\Commands\Cache\ActivityFeed::CACHE_KEY)
             ->andReturn(null);
 
         Cache::shouldReceive('get')
             ->once()
-            ->with('github_insights_languages')
+            ->with(\App\Console\Commands\Cache\Insights::CACHE_KEY)
             ->andReturn(null);
 
         $response = $this->get('/data/activity-feed.json');

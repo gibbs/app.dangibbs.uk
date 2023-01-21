@@ -12,6 +12,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
+        // Linux EOL
+        $schedule->command('cache:eol-linux')->weekly();
+
         // GitHub activity feed (commits)
         $schedule->command('cache:activityfeed')->hourly();
 

@@ -13,8 +13,8 @@ class ActivityFeed extends Controller
     public function __invoke(): \Illuminate\Http\JsonResponse
     {
         return response()->json([
-            'activity' => Cache::get('github_activity_feed'),
-            'insights' => Cache::get('github_insights_languages'),
+            'activity' => Cache::get(\App\Console\Commands\Cache\ActivityFeed::CACHE_KEY),
+            'insights' => Cache::get(\App\Console\Commands\Cache\Insights::CACHE_KEY),
         ]);
     }
 }
