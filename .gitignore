@@ -16,3 +16,4 @@ docker-compose.override.yml
 /*.log
 /tools
 /phpunit.xml
+/.phpunit*

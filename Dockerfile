@@ -1,8 +1,8 @@
-FROM php:8.1-fpm-buster
+FROM php:8.4-fpm-bookworm
 
-ENV COMPOSER_ALLOW_SUPERUSER 1
-ENV COMPOSER_HTACCESS_PROTECT 0
-ENV COMPOSER_HOME /var/www/html/
+ENV COMPOSER_ALLOW_SUPERUSER=1
+ENV COMPOSER_HTACCESS_PROTECT=0
+ENV COMPOSER_HOME=/var/www/html/
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
