@@ -47,5 +47,12 @@ docker run -it ${DOCKER_BUILD_NAME}:${DOCKER_BUILD_TAG}
 ### Debug
 
 ```bash
-docker exec -it $(docker ps | grep '${DOCKER_BUILD_NAME}:${DOCKER_BUILD_TAG}' | awk '{ print $1 }') /bin/bash
+docker exec -it $(docker ps | grep ${DOCKER_BUILD_NAME}:${DOCKER_BUILD_TAG} | awk '{ print $1 }') /bin/bash
+```
+
+### Push
+
+```bash
+docker push ${DOCKER_BUILD_NAME}:${DOCKER_BUILD_TAG}
+docker push ${DOCKER_BUILD_NAME}:latest
 ```
