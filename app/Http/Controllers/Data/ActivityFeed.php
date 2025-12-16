@@ -3,25 +3,23 @@
 namespace App\Http\Controllers\Data;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Cache;
 
 class ActivityFeed extends Controller
 {
+    public function __construct(
+        protected \App\Services\Data\ActivityFeedService $activityFeedService,
+        protected \App\Services\Data\InsightsFeedService $insightsFeedService,
+    ) {
+    }
+
     /**
-     * Return the activity feed.
+     * Return feed data
      */
     public function __invoke(): \Illuminate\Http\JsonResponse
     {
-        // Get the cached activity feed
-        $activity = Cache::get('github_activity_feed');
-
-        // Get the cached insights feed
-        $insights  = Cache::get('github_insights_languages');
-
-        // Return available data
         return response()->json([
-            'activity' => $activity,
-            'insights' => $insights,
+            'activity' => $this->activityFeedService->getCached(),
+            'insights' => $this->insightsFeedService->getCached(),
         ]);
     }
 }
