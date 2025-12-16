@@ -3,104 +3,36 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Http;
 
 class CacheInsights extends Command
 {
     /**
-     * The name and signature of the console command.
-     *
-     * @var string
+     * @inheritDoc
      */
     protected $signature = 'cache:insights';
 
     /**
-     * The console command description.
-     *
-     * @var string
+     * @inheritDoc
      */
     protected $description = 'Caches insights data from API requests to GitHub';
 
     /**
-     * Create a new command instance.
-     *
-     * @return void
+     * @inheritDoc
      */
-    public function __construct()
-    {
+    public function __construct(
+        protected \App\Services\Data\InsightsFeedService $insightsFeedService
+    ) {
         parent::__construct();
     }
 
     /**
      * Execute the console command.
+     *
+     * @return int
      */
     public function handle(): int
     {
-        $url = 'https://api.github.com';
-
-        // Repositories cache key
-        $repositories_key = 'github_repositories';
-
-        // Get repositories data
-        $repositories = Http::withBasicAuth(config('api.github_username'), config('api.github_access_token'))
-            ->get(sprintf('%s/users/gibbs/repos', $url), [
-                'order'    => 'desc',
-                'page'     => 1,
-                'per_page' => 100,
-            ])
-            ->throw()
-            ->json();
-
-        // Cache response
-        Cache::forever($repositories_key, $repositories);
-
-        $language_data = [];
-
-        // Iterate repository data
-        foreach($repositories as $repository) {
-            if ($repository['fork']) {
-                continue;
-            }
-
-            $language_key = sprintf('github_repository_languages_%s', $repository['full_name']);
-
-            // Get language data
-            $languages = Http::withHeaders(['content-type' => 'application/json'])
-                ->withBasicAuth(config('api.github_username'), config('api.github_access_token'))
-                ->get(sprintf('%s/repos/%s/languages', $url, $repository['full_name']))
-                ->throw()
-                ->json();
-
-            Cache::forever($language_key, $languages);
-
-            // Create the language data
-            foreach($languages as $language => $bytes) {
-                if (!array_key_exists($language, $language_data)) {
-                    $language_data[$language] = [
-                        'name'  => $language,
-                        'count' => 1,
-                        'bytes' => $bytes,
-                    ];
-
-                    continue;
-                }
-
-                $language_data[$language]['count'] += 1;
-                $language_data[$language]['bytes'] += $bytes;
-            }
-        }
-
-        // Default sort by count
-        uasort($language_data, function($x, $y) {
-            return $y['count'] <=> $x['count'];
-        });
-
-        // Cache general data
-        Cache::forever('github_insights_languages', [
-            'usage'     => $language_data,
-            'languages' => array_keys($language_data),
-        ]);
+        $this->insightsFeedService->cache();
 
         return 0;
     }

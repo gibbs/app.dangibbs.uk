@@ -4,28 +4,25 @@ namespace App\Http\Controllers\Tool;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Tool\UuidRequest;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Http\JsonResponse;
 
 class Uuid extends Controller
 {
+    public function __construct(
+        protected \App\Services\Tool\UuidService $uuidService
+    ) {
+    }
+
     /**
-     * Return a UUID generated from a service URL
+     * Return a generated UUID
      */
     public function __invoke(UuidRequest $request): JsonResponse
     {
-        // Create the request url
-        $request_url = sprintf('%s/tools/uuidgen', config('app.webhook_url'));
+        $data = $this->uuidService->generateUuid([
+            'random' => (bool) $request->get('random'),
+            'time'   => (bool) $request->get('time'),
+        ]);
 
-        // Service response
-        $response = Http::withHeaders(['content-type' => 'application/json'])
-            ->post($request_url, [
-                'random' => (bool) $request->get('random'),
-                'time'   => (bool) $request->get('time'),
-            ])
-            ->throw()
-            ->json();
-
-        return response()->json($response);
+        return response()->json($data);
     }
 }
