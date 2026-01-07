@@ -84,12 +84,21 @@ class InsightsFeedService implements FeedServiceInterface
      */
     public function getProcessed(array $data): array
     {
-        $processed = [];
+        $processed = [
+            'stats' => [
+                'bytes' => 0,
+                'count' => 0,
+            ],
+            'languages' => [],
+        ];
 
         foreach ($data['languages'] as $response) {
             foreach ($response as $language => $bytes) {
-                if (!array_key_exists($language, $processed)) {
-                    $processed[$language] = [
+                $processed['stats']['count'] += 1;
+                $processed['stats']['bytes'] += $bytes;
+
+                if (!array_key_exists($language, $processed['languages'])) {
+                    $processed['languages'][$language] = [
                         'name'  => $language,
                         'count' => 1,
                         'bytes' => $bytes,
@@ -98,19 +107,30 @@ class InsightsFeedService implements FeedServiceInterface
                     continue;
                 }
 
-                $processed[$language]['count'] += 1;
-                $processed[$language]['bytes'] += $bytes;
+                $processed['languages'][$language]['count'] += 1;
+                $processed['languages'][$language]['bytes'] += $bytes;
             }
         }
 
         // Default sort by count
-        uasort($processed, function($x, $y) {
+        uasort($processed['languages'], function($x, $y) {
             return $y['count'] <=> $x['count'];
         });
 
+        $topLanguage = array_key_first($processed['languages']);
+
+        foreach ($processed['languages'] as $key => $language) {
+            $processed['languages'][$key]['percentage'] = ceil($language['count'] / $processed['stats']['count'] * 100);
+
+            $processed['languages'][$key]['width'] = ($key === $topLanguage)
+                ? 100
+                : ceil($language['count'] / $processed['languages'][$topLanguage]['count'] * 100);
+        }
+
         return [
-            'usage'     => $processed,
-            'languages' => array_keys($processed),
+            'languages' => array_keys($processed['languages']),
+            'stats'     => $processed['stats'],
+            'usage'     => $processed['languages'],
         ];
     }
 }
