@@ -10,7 +10,8 @@ class ActivityFeedService implements FeedServiceInterface
 
     public function __construct(
         protected \Illuminate\Contracts\Cache\Repository $cache,
-        protected \Illuminate\Http\Client\Factory $http
+        protected \Illuminate\Http\Client\Factory $http,
+        protected \Illuminate\Contracts\Config\Repository $config,
     ) {
     }
 
@@ -44,11 +45,13 @@ class ActivityFeedService implements FeedServiceInterface
      */
     public function getRaw(): array
     {
+        $user = $this->config->get('api.github_username');
+
         $response = $this->http->withHeaders([
                 'content-type' => 'application/json',
             ])
             ->get('https://api.github.com/search/commits?', [
-                'q'        => 'author:gibbs is:public',
+                'q'        => sprintf('author:%1$s committer:%1$s user:%1$s is:public', $user),
                 'sort'     => 'author-date',
                 'order'    => 'desc',
                 'page'     => 1,
